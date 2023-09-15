@@ -62,11 +62,11 @@ class Range
         try {
             $start = @$this->start->modify($modifier);
             $end = @$this->end->modify($modifier);
+            if (!$start || !$end) {
+                throw new RangeException();
+            }
         } catch (Throwable $e) {
-            $start = $end = null;
-        }
-        if (!$start || !$end) {
-            throw new RangeException('Invalid modifier.');
+           throw new RangeException('Invalid modifier.');
         }
         return new self($start, $end);
     }
