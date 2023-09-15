@@ -213,6 +213,16 @@ class DateTimeTest extends TestCase
         $range = new Range($start, $end);
     }
 
+    public function testModifyError()
+    {
+        $start = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
+        $end = new DateTimeImmutable('2023-09-15 13:28:55-01:00');
+        $range = new Range($start, $end);
+        $this->expectException(RangeException::class);
+        $this->expectExceptionMessage('Invalid modifier.');
+        $range->modify('Invalid');
+    }
+
     public function testInRangeError()
     {
         $start = new DateTimeImmutable('2023-09-15 13:28:55+00:00');

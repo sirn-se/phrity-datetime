@@ -58,8 +58,8 @@ class Range
 
     public function modify(string $modifier): self
     {
-        $start = $this->start->modify($modifier);
-        $end = $this->end->modify($modifier);
+        $start = @$this->start->modify($modifier);
+        $end = @$this->end->modify($modifier);
         if (!$start || !$end) {
             throw new RangeException('Invalid modifier.');
         }
