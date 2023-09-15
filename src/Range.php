@@ -18,25 +18,12 @@ class Range
 
     public function __construct($start, $end)
     {
-        if ($start instanceof DateTimeInterface) {
-            $this->start = DateTimeImmutable::createFromInterface($start);
-        } elseif (is_string($start)) {
-            $this->start = new DateTimeImmutable($start);
-        } else {
-            throw new TypeError('Phrity\DateTime\Range::__construct(): Argument #1 ($start) must be of type DateTimeInterface or string.');
-        }
-        if ($end instanceof DateTimeInterface) {
-            $this->end = DateTimeImmutable::createFromInterface($end)->setTimezone($this->start->getTimezone());
-        } elseif ($end instanceof DateInterval) {
-            $this->end = $this->start->add($end);
-        } elseif (is_string($end)) {
-            $this->end = new DateTimeImmutable($end, $this->start->getTimezone());
-        } else {
-            throw new TypeError('Phrity\DateTime\Range::__construct(): Argument #2 ($end) must be of type DateTimeInterface, DateInterval or string.');
-        }
+        $this->start = $this->parseDateTime($start);
+        $this->end = $this->parseDateTime($end, $this->start);
         if ($this->end < $this->start) {
-            throw new RangeException('Phrity\DateTime\Range::__construct(): Argument #2 ($end) be same or later than Argument #1 ($start).');
+            throw new RangeException("Invalid range.");
         }
+        $this->end = $this->end->setTimezone($this->start->getTimezone());
     }
 
     public function getTimezone()
@@ -74,7 +61,7 @@ class Range
         $start = $this->start->modify($modifier);
         $end = $this->end->modify($modifier);
         if (!$start || !$end) {
-            throw new RangeException('Phrity\DateTime\Range::modify(): Argument #1 ($modifier) is an invalid modifier.');
+            throw new RangeException('Invalid modifier.');
         }
         return new self($start, $end);
     }
@@ -90,7 +77,7 @@ class Range
         if ($datetime instanceof Range) {
             return $datetime->start >= $this->start && $datetime->end <= $this->end;
         }
-        throw new TypeError('Phrity\DateTime\Range::inRange(): Argument #1 ($datetime) must be of type DateTimeInterface, Range or string.');
+        throw new TypeError('Argument must be of type DateTimeInterface, Range or string.');
     }
 
     public function isBefore($datetime): bool
@@ -104,7 +91,7 @@ class Range
         if ($datetime instanceof Range) {
             return $datetime->start < $this->start;
         }
-        throw new TypeError('Phrity\DateTime\Range::isBefore(): Argument #1 ($datetime) must be of type DateTimeInterface, Range or string.');
+        throw new TypeError('Argument must be of type DateTimeInterface, Range or string.');
     }
 
     public function isAfter($datetime): bool
@@ -118,7 +105,7 @@ class Range
         if ($datetime instanceof Range) {
             return $datetime->end > $this->end;
         }
-        throw new TypeError('Phrity\DateTime\Range::isAfter(): Argument #1 ($datetime) must be of type DateTimeInterface, Range or string.');
+        throw new TypeError('Argument must be of type DateTimeInterface, Range or string.');
     }
 
     public function getInterval(): DateInterval
@@ -141,4 +128,23 @@ class Range
         return $this->format('c');
     }
 
+    private function parseDateTime($input, ?DateTimeImmutable $relative = null): ?DateTimeImmutable
+    {
+        if (is_string($input)) {
+            return new DateTimeImmutable($input);
+        }
+        if ($input instanceof DateTimeImmutable) {
+            return $input;
+        }
+        if ($input instanceof DateTime) {
+            return DateTimeImmutable::createFromMutable($input);
+        }
+        if (!$relative) {
+            throw new TypeError('Argument must be of type DateTimeInterface or string.');
+        }
+        if ($input instanceof DateInterval) {
+            return $relative->add($input);
+        }
+        throw new TypeError('Argument must be of type DateTimeInterface, DateInterval or string.');
+    }
 }

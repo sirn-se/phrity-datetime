@@ -170,7 +170,7 @@ class DateTimeTest extends TestCase
         $start = null;
         $end = new DateTimeImmutable('2023-09-15 13:28:55-01:00');
         $this->expectException(TypeError::class);
-        $this->expectExceptionMessage('Phrity\DateTime\Range::__construct(): Argument #1 ($start) must be of type DateTimeInterface or string.');
+        $this->expectExceptionMessage('Argument must be of type DateTimeInterface or string.');
         $range = new Range($start, $end);
     }
 
@@ -188,7 +188,7 @@ class DateTimeTest extends TestCase
         $start = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
         $end = null;
         $this->expectException(TypeError::class);
-        $this->expectExceptionMessage('Phrity\DateTime\Range::__construct(): Argument #2 ($end) must be of type DateTimeInterface, DateInterval or string.');
+        $this->expectExceptionMessage('Argument must be of type DateTimeInterface, DateInterval or string.');
         $range = new Range($start, $end);
     }
 
@@ -206,7 +206,7 @@ class DateTimeTest extends TestCase
         $end = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
         $start = new DateTimeImmutable('2023-09-15 13:28:55-01:00');
         $this->expectException(RangeException::class);
-        $this->expectExceptionMessage('Phrity\DateTime\Range::__construct(): Argument #2 ($end) be same or later than Argument #1 ($start).');
+        $this->expectExceptionMessage('Invalid range.');
         $range = new Range($start, $end);
     }
 }
