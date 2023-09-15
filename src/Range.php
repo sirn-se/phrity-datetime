@@ -9,6 +9,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use RangeException;
+use Throwable;
 use TypeError;
 
 class Range
@@ -58,8 +59,12 @@ class Range
 
     public function modify(string $modifier): self
     {
-        $start = @$this->start->modify($modifier);
-        $end = @$this->end->modify($modifier);
+        try {
+            $start = @$this->start->modify($modifier);
+            $end = @$this->end->modify($modifier);
+        } catch (Throwable $e) {
+            $start = $end = null;
+        }
         if (!$start || !$end) {
             throw new RangeException('Invalid modifier.');
         }
