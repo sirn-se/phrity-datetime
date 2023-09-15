@@ -120,6 +120,9 @@ class DateTimeTest extends TestCase
         $this->assertFalse($range->isAfter($end));
         $this->assertFalse($range->isAfter($before));
         $this->assertTrue($range->isAfter($after));
+        $this->assertTrue($range->inRange('2023-09-15 13:28:55+00:00'));
+        $this->assertFalse($range->isBefore('2023-09-15 13:28:55+00:00'));
+        $this->assertFalse($range->isAfter('2023-09-15 13:28:55+00:00'));
     }
 
     public function testRangesRange()
@@ -208,5 +211,35 @@ class DateTimeTest extends TestCase
         $this->expectException(RangeException::class);
         $this->expectExceptionMessage('Invalid range.');
         $range = new Range($start, $end);
+    }
+
+    public function testInRangeError()
+    {
+        $start = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
+        $end = new DateTimeImmutable('2023-09-15 13:28:55-01:00');
+        $range = new Range($start, $end);
+        $this->expectException(TypeError::class);
+        $this->expectExceptionMessage('Argument must be of type DateTimeInterface, Range or string.');
+        $range->inRange(null);
+    }
+
+    public function testIsBeforeError()
+    {
+        $start = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
+        $end = new DateTimeImmutable('2023-09-15 13:28:55-01:00');
+        $range = new Range($start, $end);
+        $this->expectException(TypeError::class);
+        $this->expectExceptionMessage('Argument must be of type DateTimeInterface, Range or string.');
+        $range->isBefore(null);
+    }
+
+    public function testInAfterError()
+    {
+        $start = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
+        $end = new DateTimeImmutable('2023-09-15 13:28:55-01:00');
+        $range = new Range($start, $end);
+        $this->expectException(TypeError::class);
+        $this->expectExceptionMessage('Argument must be of type DateTimeInterface, Range or string.');
+        $range->isAfter(null);
     }
 }

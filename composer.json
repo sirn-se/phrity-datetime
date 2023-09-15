@@ -1,9 +1,9 @@
 {
     "name": "phrity/datetime",
     "type": "library",
-    "description": "",
-    "homepage": "https://phrity.sirn.se/",
-    "keywords": ["date", "time"],
+    "description": "DateTime utilities.",
+    "homepage": "https://phrity.sirn.se/datetime",
+    "keywords": ["date", "time", "range"],
     "license": "MIT",
     "authors": [
         {
