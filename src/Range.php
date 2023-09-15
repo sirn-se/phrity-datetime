@@ -66,7 +66,7 @@ class Range
                 throw new RangeException();
             }
         } catch (Throwable $e) {
-           throw new RangeException('Invalid modifier.');
+            throw new RangeException('Invalid modifier.');
         }
         return new self($start, $end);
     }
