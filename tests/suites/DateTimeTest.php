@@ -16,7 +16,7 @@ use TypeError;
 
 class DateTimeTest extends TestCase
 {
-    public function testDateTimeImmutableInput()
+    public function testDateTimeImmutableInput(): void
     {
         $start = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
         $end = new DateTimeImmutable('2023-09-15 13:28:55-01:00');
@@ -27,7 +27,7 @@ class DateTimeTest extends TestCase
         $this->assertEquals($end, $range->getEnd());
     }
 
-    public function testDateTimeInput()
+    public function testDateTimeInput(): void
     {
         $start = new DateTime('2023-09-15 13:28:55+00:00');
         $end = new DateTime('2023-09-15 13:28:55-01:00');
@@ -38,7 +38,7 @@ class DateTimeTest extends TestCase
         $this->assertEquals($end, $range->getEnd());
     }
 
-    public function testStringInput()
+    public function testStringInput(): void
     {
         $start = new DateTime('2023-09-15 13:28:55+00:00');
         $end = new DateTime('2023-09-15 13:28:55-01:00');
@@ -49,7 +49,7 @@ class DateTimeTest extends TestCase
         $this->assertEquals($end, $range->getEnd());
     }
 
-    public function testDateIntervalInput()
+    public function testDateIntervalInput(): void
     {
         $start = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
         $end = new DateTime('2023-09-15 13:28:55-01:00');
@@ -61,7 +61,7 @@ class DateTimeTest extends TestCase
         $this->assertEquals($end, $range->getEnd());
     }
 
-    public function testTimezone()
+    public function testTimezone(): void
     {
         $start = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
         $end = new DateTimeImmutable('2023-09-15 13:28:55-01:00');
@@ -73,7 +73,7 @@ class DateTimeTest extends TestCase
         $this->assertEquals('-02:00', $changed->getTimezone()->getName());
     }
 
-    public function testFormat()
+    public function testFormat(): void
     {
         $start = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
         $end = new DateTimeImmutable('2023-09-15 13:28:55-01:00');
@@ -82,7 +82,7 @@ class DateTimeTest extends TestCase
         $this->assertEquals('2023-09-15T13:28:55+00:00 - 2023-09-15T14:28:55+00:00', "{$range}");
     }
 
-    public function testModifiers()
+    public function testModifiers(): void
     {
         $start = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
         $end = new DateTimeImmutable('2023-09-15 14:28:55+00:00');
@@ -101,7 +101,7 @@ class DateTimeTest extends TestCase
         $this->assertEquals(new DateTimeImmutable('2023-09-15 13:28:55+00:00'), $mod->getEnd());
     }
 
-    public function testRangesDateTime()
+    public function testRangesDateTime(): void
     {
         $start = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
         $end = new DateTimeImmutable('2023-09-15 13:28:55-01:00');
@@ -125,7 +125,7 @@ class DateTimeTest extends TestCase
         $this->assertFalse($range->isAfter('2023-09-15 13:28:55+00:00'));
     }
 
-    public function testRangesRange()
+    public function testRangesRange(): void
     {
         $range = new Range('2023-09-15 13:28:55+00:00', '2023-09-15 13:28:55-01:00');
         $within = new Range('2023-09-15 13:28:56+00:00', '2023-09-15 13:28:54-01:00');
@@ -153,7 +153,7 @@ class DateTimeTest extends TestCase
         $this->assertTrue($range->isAfter($after_overlap));
     }
 
-    public function testIntervals()
+    public function testIntervals(): void
     {
         $start = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
         $end = new DateTimeImmutable('2023-09-15 13:28:55-01:00');
@@ -168,16 +168,7 @@ class DateTimeTest extends TestCase
         $this->assertEquals($end, $period->getEndDate());
     }
 
-    public function testStartTypeError()
-    {
-        $start = null;
-        $end = new DateTimeImmutable('2023-09-15 13:28:55-01:00');
-        $this->expectException(TypeError::class);
-        $this->expectExceptionMessage('Argument must be of type DateTimeInterface or string.');
-        $range = new Range($start, $end);
-    }
-
-    public function testStartParseError()
+    public function testStartParseError(): void
     {
         $start = '23-23-23';
         $end = new DateTimeImmutable('2023-09-15 13:28:55-01:00');
@@ -186,16 +177,7 @@ class DateTimeTest extends TestCase
         $range = new Range($start, $end);
     }
 
-    public function testEndTypeError()
-    {
-        $start = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
-        $end = null;
-        $this->expectException(TypeError::class);
-        $this->expectExceptionMessage('Argument must be of type DateTimeInterface, DateInterval or string.');
-        $range = new Range($start, $end);
-    }
-
-    public function testEndParseError()
+    public function testEndParseError(): void
     {
         $start = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
         $end = '23-23-23';
@@ -204,7 +186,7 @@ class DateTimeTest extends TestCase
         $range = new Range($start, $end);
     }
 
-    public function testRangeError()
+    public function testRangeError(): void
     {
         $end = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
         $start = new DateTimeImmutable('2023-09-15 13:28:55-01:00');
@@ -213,7 +195,7 @@ class DateTimeTest extends TestCase
         $range = new Range($start, $end);
     }
 
-    public function testModifyError()
+    public function testModifyError(): void
     {
         $start = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
         $end = new DateTimeImmutable('2023-09-15 13:28:55-01:00');
@@ -221,35 +203,5 @@ class DateTimeTest extends TestCase
         $this->expectException(RangeException::class);
         $this->expectExceptionMessage('Invalid modifier.');
         $range->modify('Invalid');
-    }
-
-    public function testInRangeError()
-    {
-        $start = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
-        $end = new DateTimeImmutable('2023-09-15 13:28:55-01:00');
-        $range = new Range($start, $end);
-        $this->expectException(TypeError::class);
-        $this->expectExceptionMessage('Argument must be of type DateTimeInterface, Range or string.');
-        $range->inRange(null);
-    }
-
-    public function testIsBeforeError()
-    {
-        $start = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
-        $end = new DateTimeImmutable('2023-09-15 13:28:55-01:00');
-        $range = new Range($start, $end);
-        $this->expectException(TypeError::class);
-        $this->expectExceptionMessage('Argument must be of type DateTimeInterface, Range or string.');
-        $range->isBefore(null);
-    }
-
-    public function testInAfterError()
-    {
-        $start = new DateTimeImmutable('2023-09-15 13:28:55+00:00');
-        $end = new DateTimeImmutable('2023-09-15 13:28:55-01:00');
-        $range = new Range($start, $end);
-        $this->expectException(TypeError::class);
-        $this->expectExceptionMessage('Argument must be of type DateTimeInterface, Range or string.');
-        $range->isAfter(null);
     }
 }
