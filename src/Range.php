@@ -14,10 +14,10 @@ use TypeError;
 
 class Range
 {
-    private $start;
-    private $end;
+    private DateTimeImmutable $start;
+    private DateTimeImmutable $end;
 
-    public function __construct($start, $end)
+    public function __construct(DateTimeInterface|string $start, DateTimeInterface|DateInterval|string $end)
     {
         $this->start = $this->parseDateTime($start);
         $this->end = $this->parseDateTime($end, $this->start);
@@ -27,7 +27,7 @@ class Range
         $this->end = $this->end->setTimezone($this->start->getTimezone());
     }
 
-    public function getTimezone()
+    public function getTimezone(): DateTimeZone
     {
         return $this->start->getTimezone();
     }
@@ -71,7 +71,7 @@ class Range
         return new self($start, $end);
     }
 
-    public function inRange($datetime): bool
+    public function inRange(DateTimeInterface|Range|string $datetime): bool
     {
         if (is_string($datetime)) {
             $datetime = new DateTimeImmutable($datetime);
@@ -79,13 +79,10 @@ class Range
         if ($datetime instanceof DateTimeInterface) {
             return $datetime >= $this->start && $datetime <= $this->end;
         }
-        if ($datetime instanceof Range) {
-            return $datetime->start >= $this->start && $datetime->end <= $this->end;
-        }
-        throw new TypeError('Argument must be of type DateTimeInterface, Range or string.');
+        return $datetime->start >= $this->start && $datetime->end <= $this->end;
     }
 
-    public function isBefore($datetime): bool
+    public function isBefore(DateTimeInterface|Range|string $datetime): bool
     {
         if (is_string($datetime)) {
             $datetime = new DateTimeImmutable($datetime);
@@ -93,13 +90,10 @@ class Range
         if ($datetime instanceof DateTimeInterface) {
             return $datetime < $this->start;
         }
-        if ($datetime instanceof Range) {
-            return $datetime->start < $this->start;
-        }
-        throw new TypeError('Argument must be of type DateTimeInterface, Range or string.');
+        return $datetime->start < $this->start;
     }
 
-    public function isAfter($datetime): bool
+    public function isAfter(DateTimeInterface|Range|string $datetime): bool
     {
         if (is_string($datetime)) {
             $datetime = new DateTimeImmutable($datetime);
@@ -107,10 +101,7 @@ class Range
         if ($datetime instanceof DateTimeInterface) {
             return $datetime > $this->end;
         }
-        if ($datetime instanceof Range) {
-            return $datetime->end > $this->end;
-        }
-        throw new TypeError('Argument must be of type DateTimeInterface, Range or string.');
+        return $datetime->end > $this->end;
     }
 
     public function getInterval(): DateInterval
@@ -118,6 +109,9 @@ class Range
         return $this->start->diff($this->end);
     }
 
+    /**
+     * @return DatePeriod<DateTimeImmutable, DateTimeImmutable, null>
+     */
     public function getPeriod(DateInterval $interval, int $options = 0): DatePeriod
     {
         return new DatePeriod($this->start, $interval, $this->end, $options);
@@ -128,13 +122,15 @@ class Range
         return "{$this->start->format($format)} - {$this->end->format($format)}";
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->format('c');
     }
 
-    private function parseDateTime($input, ?DateTimeImmutable $relative = null): ?DateTimeImmutable
-    {
+    private function parseDateTime(
+        DateTimeInterface|DateInterval|string $input,
+        DateTimeImmutable|null $relative = null
+    ): DateTimeImmutable {
         if (is_string($input)) {
             return new DateTimeImmutable($input);
         }
@@ -144,12 +140,8 @@ class Range
         if ($input instanceof DateTime) {
             return DateTimeImmutable::createFromMutable($input);
         }
-        if (!$relative) {
-            throw new TypeError('Argument must be of type DateTimeInterface or string.');
-        }
-        if ($input instanceof DateInterval) {
+        if ($relative instanceof DateTimeImmutable) {
             return $relative->add($input);
         }
-        throw new TypeError('Argument must be of type DateTimeInterface, DateInterval or string.');
     }
 }
