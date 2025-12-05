@@ -20,7 +20,7 @@ class Range
     public function __construct(DateTimeInterface|string $start, DateTimeInterface|DateInterval|string $end)
     {
         $this->start = $this->parseDateTime($start);
-        $this->end = $this->parseDateTime($end, $this->start);
+        $this->end = $this->parseDateTime($end);
         if ($this->end < $this->start) {
             throw new RangeException("Invalid range.");
         }
@@ -127,21 +127,17 @@ class Range
         return $this->format('c');
     }
 
-    private function parseDateTime(
-        DateTimeInterface|DateInterval|string $input,
-        DateTimeImmutable|null $relative = null
-    ): DateTimeImmutable {
+    private function parseDateTime(DateTimeInterface|DateInterval|string $input): DateTimeImmutable
+    {
+        if ($input instanceof DateInterval) {
+            return $this->start->add($input);
+        }
         if (is_string($input)) {
             return new DateTimeImmutable($input);
         }
         if ($input instanceof DateTimeImmutable) {
             return $input;
         }
-        if ($input instanceof DateTime) {
-            return DateTimeImmutable::createFromMutable($input);
-        }
-        if ($relative instanceof DateTimeImmutable) {
-            return $relative->add($input);
-        }
+        return DateTimeImmutable::createFromMutable($input);
     }
 }
