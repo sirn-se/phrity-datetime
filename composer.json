@@ -18,7 +18,8 @@
         }
     },
     "require": {
-        "php": "^8.1"
+        "php": "^8.1",
+        "phrity/util-errorhandler": "^1.0"
     },
     "require-dev": {
         "phpstan/phpstan": "^2.0",
