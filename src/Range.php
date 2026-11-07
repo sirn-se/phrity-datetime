@@ -7,10 +7,11 @@ use DatePeriod;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
+use ErrorException;
+use Phrity\Util\ErrorHandler;
 use DateTimeZone;
 use RangeException;
 use Throwable;
-use TypeError;
 
 class Range
 {
@@ -60,11 +61,14 @@ class Range
     public function modify(string $modifier): self
     {
         try {
-            $start = @$this->start->modify($modifier);
-            $end = @$this->end->modify($modifier);
-            if (!$start || !$end) {
-                throw new RangeException();
-            }
+            /** @throws ErrorException */
+            $handler = new ErrorHandler();
+            $start = $handler->with(function () use ($modifier) {
+                return $this->start->modify($modifier);
+            });
+            $end = $handler->with(function () use ($modifier) {
+                return $this->end->modify($modifier);
+            });
         } catch (Throwable $e) {
             throw new RangeException('Invalid modifier.');
         }
